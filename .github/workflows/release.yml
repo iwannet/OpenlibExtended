@@ -8,6 +8,8 @@ jobs:
   build-and-release:
     name: Build and Release Android APKs
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
