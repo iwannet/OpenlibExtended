@@ -56,6 +56,11 @@ As [Anna’s Archive](https://annas-archive.org/) Doesn't Have An API. The App W
   - Drag-to-reorder priority
   - Enable/disable instances
   - Automatic retry (2x per instance) with seamless fallback
+- **Background Downloads** - Download books in the background with progress notifications
+  - Queue multiple books for simultaneous download
+  - Progress notifications with real-time updates
+  - Downloads continue even when app is in background
+  - Visual download queue in Home, Search, and My Library pages
 - Trending Books
 - Download And Read Books With In-Built Viewer
 - Supports Epub And Pdf Formats
@@ -66,8 +71,6 @@ As [Anna’s Archive](https://annas-archive.org/) Doesn't Have An API. The App W
 ## Roadmap 🎯
 
 - Adding More Book Format supports (cbz,cbr,azw3,etc...)
-- Adding Support For Background Downloads
-- Adding Support For Multiple Downloads
 - Move existing books when changing the storage path
 
 ## Building from Source

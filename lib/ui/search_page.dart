@@ -7,6 +7,7 @@ import 'dart:async'; // For Timer/Debounce
 import 'package:http/http.dart' as http; // Required for the API calls (ensure package is installed)
 
 // Project imports:
+import 'package:openlib/ui/components/active_downloads_widget.dart';
 import 'package:openlib/ui/components/page_title_widget.dart';
 import 'package:openlib/ui/results_page.dart';
 import 'components/snack_bar_widget.dart';
@@ -135,6 +136,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const ActiveDownloadsWidget(),
             const TitleText("Search"),
             // Search Input Field
             Padding(

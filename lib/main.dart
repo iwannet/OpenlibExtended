@@ -20,6 +20,7 @@ import 'package:openlib/ui/themes.dart';
 
 import 'package:openlib/services/files.dart'
     show moveFilesToAndroidInternalStorage;
+import 'package:openlib/services/download_manager.dart';
 import 'package:openlib/state/state.dart'
     show
         selectedIndexProvider,
@@ -38,6 +39,8 @@ void main() async {
   }
 
   MyLibraryDb dataBase = MyLibraryDb.instance;
+
+  await DownloadManager().initialize();
   bool isDarkMode =
       await dataBase.getPreference('darkMode') == 0 ? false : true;
   bool openPdfwithExternalapp = await dataBase

@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 // Project imports:
 import 'package:openlib/state/state.dart' show myLibraryProvider;
+import 'package:openlib/ui/components/active_downloads_widget.dart';
 import 'package:openlib/ui/components/book_card_widget.dart';
 import 'package:openlib/ui/components/error_widget.dart';
 import 'package:openlib/ui/components/page_title_widget.dart';
@@ -27,6 +28,9 @@ class MyLibraryPage extends ConsumerWidget {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: <Widget>[
+                const SliverToBoxAdapter(
+                  child: ActiveDownloadsWidget(),
+                ),
                 const SliverToBoxAdapter(
                   child: TitleText("My Library"),
                 ),

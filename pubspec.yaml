@@ -66,6 +66,7 @@ dependencies:
   http: ^1.2.2
   path: ^1.9.0
   share_plus: ^10.1.0
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   import_sorter: ^4.6.0
