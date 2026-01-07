@@ -27,14 +27,28 @@ jobs:
           cache: true
       
       - name: Decode and install Keystore
-        # FIX: The 'if' condition is simplified to correctly check for the secret.
-        if: secrets.KEYSTORE_BASE64 != ''
+        # This step now runs always, but the script inside is conditional.
+        # We pass the secrets to environment variables.
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ${{ github.workspace }}/android/app/upload-keystore.jks
-          echo "storeFile=${{ github.workspace }}/android/app/upload-keystore.jks" > ${{ github.workspace }}/android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> ${{ github.workspace }}/android/key.properties
-          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> ${{ github.workspace }}/android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> ${{ github.workspace }}/android/key.properties
+          # Use a shell 'if' to check if the secret env var is populated.
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Keystore secret found, creating keystore and properties files."
+            # Decode the base64 secret and create the keystore file
+            echo "$KEYSTORE_BASE64" | base64 --decode > ${{ github.workspace }}/android/app/upload-keystore.jks
+            
+            # Create the key.properties file with the other secrets
+            echo "storeFile=${{ github.workspace }}/android/app/upload-keystore.jks" > ${{ github.workspace }}/android/key.properties
+            echo "keyAlias=$KEY_ALIAS" >> ${{ github.workspace }}/android/key.properties
+            echo "storePassword=$STORE_PASSWORD" >> ${{ github.workspace }}/android/key.properties
+            echo "keyPassword=$KEY_PASSWORD" >> ${{ github.workspace }}/android/key.properties
+          else
+            echo "Keystore secret not found. Skipping app signing."
+          fi
 
       - name: Get Flutter dependencies
         run: flutter pub get
