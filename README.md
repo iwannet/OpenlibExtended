@@ -50,6 +50,12 @@ As [Anna’s Archive](https://annas-archive.org/) Doesn't Have An API. The App W
 
 ## Features ✨
 
+- **Multi-Instance Support** - Configure multiple Anna's Archive mirrors with automatic failover
+  - 7 pre-configured instances (Anna's Archive .org, .gs, .se, .li, .st, .pm + welib.org)
+  - Add custom mirror instances
+  - Drag-to-reorder priority
+  - Enable/disable instances
+  - Automatic retry (2x per instance) with seamless fallback
 - Trending Books
 - Download And Read Books With In-Built Viewer
 - Supports Epub And Pdf Formats
