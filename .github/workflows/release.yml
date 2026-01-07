@@ -30,7 +30,7 @@ jobs:
       - name: Build all APKs
         run: |
           flutter build apk --release
-          flutter build apk --split-per-abi
+          flutter build apk --split-per-abi --release
 
       - name: Prepare Release Artifacts
         run: |
@@ -38,7 +38,6 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk release-artifacts/openlib-extended-universal-release.apk
           mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk release-artifacts/openlib-extended-arm64-v8a-release.apk
           mv build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk release-artifacts/openlib-extended-armeabi-v7a-release.apk
-          
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
