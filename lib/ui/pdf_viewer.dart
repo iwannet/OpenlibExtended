@@ -150,7 +150,7 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
       ref.read(pdfCurrentPage.notifier).state = currentPage - 1;
       controller.setPage(currentPage - 1);
     } else {
-      ref.read(pdfCurrentPage.notifier).state = totalPages;
+      ref.read(pdfCurrentPage.notifier).state = totalPages - 1;
       controller.setPage(totalPages - 1);
     }
   }
