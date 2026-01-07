@@ -15,6 +15,7 @@ import 'package:openlib/services/share_book.dart';
 import 'package:openlib/services/annas_archieve.dart' show BookInfoData;
 import 'package:openlib/services/database.dart';
 import 'package:openlib/services/download_file.dart';
+import 'package:openlib/services/download_manager.dart';
 import 'package:openlib/ui/components/book_info_widget.dart';
 import 'package:openlib/ui/components/error_widget.dart';
 import 'package:openlib/ui/components/file_buttons_widget.dart';
@@ -36,7 +37,8 @@ import 'package:openlib/state/state.dart'
         downloadState,
         checkSumState,
         checkIdExists,
-        myLibraryProvider;
+        myLibraryProvider,
+        downloadManagerProvider;
 
 class BookInfoPage extends ConsumerWidget {
   const BookInfoPage({super.key, required this.url});
@@ -230,9 +232,32 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                         return Webview(url: widget.data.mirror ?? '');
                       }));
 
-                      if (result != null) {
-                        await downloadFileWidget(
-                            ref, context, widget.data, result);
+                      if (result != null && context.mounted) {
+                        final downloadManager = ref.read(downloadManagerProvider);
+                        final task = DownloadTask(
+                          id: '${widget.data.md5}_${DateTime.now().millisecondsSinceEpoch}',
+                          md5: widget.data.md5,
+                          title: widget.data.title,
+                          author: widget.data.author,
+                          thumbnail: widget.data.thumbnail,
+                          publisher: widget.data.publisher,
+                          info: widget.data.info,
+                          format: widget.data.format!,
+                          description: widget.data.description,
+                          link: widget.data.link,
+                          mirrors: result,
+                        );
+                        
+                        await downloadManager.addDownload(task);
+                        
+                        if (context.mounted) {
+                          showSnackBar(
+                            context: context,
+                            message: 'Download started in background',
+                          );
+                          // ignore: unused_result
+                          ref.refresh(myLibraryProvider);
+                        }
                       }
                     } else {
                       showSnackBar(

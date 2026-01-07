@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openlib/state/state.dart';
 import 'package:openlib/ui/categories_page.dart';
+import 'package:openlib/ui/components/active_downloads_widget.dart';
 import 'package:openlib/ui/components/page_title_widget.dart';
 import 'package:openlib/ui/trending_page.dart';
 
@@ -24,6 +25,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       body: Column(
         children: [
+          const ActiveDownloadsWidget(),
           Padding(
             padding: const EdgeInsets.only(left: 5, right: 5, top: 10),
             child: Row(

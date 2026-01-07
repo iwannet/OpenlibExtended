@@ -16,6 +16,7 @@ import 'package:openlib/services/files.dart';
 import 'package:openlib/services/open_library.dart';
 import 'package:openlib/services/goodreads.dart';
 import 'package:openlib/services/instance_manager.dart';
+import 'package:openlib/services/download_manager.dart';
 // Assuming OpenLibrary, Goodreads, PenguinRandomHouse, BookDigits, and SubCategoriesTypeList are defined
 // or are simple placeholder services/models that work as intended.
 
@@ -99,6 +100,18 @@ final openEpubWithExternalAppProvider = StateProvider<bool>((ref) => false);
 
 // Instance Management States
 final instanceManagerProvider = Provider<InstanceManager>((ref) => InstanceManager());
+
+// Download Manager States
+final downloadManagerProvider = Provider<DownloadManager>((ref) {
+  final manager = DownloadManager();
+  ref.onDispose(() => manager.dispose());
+  return manager;
+});
+
+final activeDownloadsProvider = StreamProvider<Map<String, DownloadTask>>((ref) {
+  final manager = ref.watch(downloadManagerProvider);
+  return manager.downloadsStream;
+});
 
 final archiveInstancesProvider = FutureProvider<List<ArchiveInstance>>((ref) async {
   final manager = ref.watch(instanceManagerProvider);
