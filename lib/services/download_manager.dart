@@ -123,11 +123,11 @@ class DownloadManager {
     List<String> httpsMirrors = [];
 
     for (var element in mirrors) {
-      if (element.contains('ipfs') == true) {
+      if (element.contains('ipfs')) {
         ipfsMirrors.add(element);
       } else {
-        if (element.startsWith('https://annas-archive.org') != true &&
-            element.startsWith('https://1lib.sk') != true) {
+        if (!element.startsWith('https://annas-archive.org') &&
+            !element.startsWith('https://1lib.sk')) {
           httpsMirrors.add(element);
         }
       }
@@ -139,6 +139,7 @@ class DownloadManager {
     Dio dio = Dio();
     const timeOut = 15;
     if (mirrors.length == 1) {
+      // Single mirror available, add small delay to avoid rate limiting
       await Future.delayed(const Duration(seconds: 2));
       return mirrors[0];
     }
