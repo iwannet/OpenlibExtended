@@ -131,6 +131,30 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
     }
   }
 
+  void _goToNextPage() {
+    final currentPage = ref.read(pdfCurrentPage);
+    final totalPages = ref.read(totalPdfPage);
+    if (currentPage + 1 < totalPages) {
+      ref.read(pdfCurrentPage.notifier).state = currentPage + 1;
+      controller.setPage(currentPage + 1);
+    } else {
+      ref.read(pdfCurrentPage.notifier).state = 0;
+      controller.setPage(0);
+    }
+  }
+
+  void _goToPreviousPage() {
+    final currentPage = ref.read(pdfCurrentPage);
+    final totalPages = ref.read(totalPdfPage);
+    if (currentPage != 0) {
+      ref.read(pdfCurrentPage.notifier).state = currentPage - 1;
+      controller.setPage(currentPage - 1);
+    } else {
+      ref.read(pdfCurrentPage.notifier).state = totalPages;
+      controller.setPage(totalPages - 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isMobile = Platform.isAndroid || Platform.isIOS;
@@ -144,16 +168,7 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
         actions: isMobile
             ? [
                 IconButton(
-                    onPressed: () {
-                      if (currentPage != 0) {
-                        ref.read(pdfCurrentPage.notifier).state =
-                            currentPage - 1;
-                        controller.setPage(currentPage - 1);
-                      } else {
-                        ref.read(pdfCurrentPage.notifier).state = totalPages;
-                        controller.setPage(totalPages - 1);
-                      }
-                    },
+                    onPressed: _goToPreviousPage,
                     icon: const Icon(
                       Icons.arrow_left,
                       size: 25,
@@ -161,16 +176,7 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
                 Text(
                     '${(currentPage + 1).toString()} / ${totalPages.toString()}'),
                 IconButton(
-                    onPressed: () {
-                      if (currentPage + 1 < totalPages) {
-                        ref.read(pdfCurrentPage.notifier).state =
-                            currentPage + 1;
-                        controller.setPage(currentPage + 1);
-                      } else {
-                        ref.read(pdfCurrentPage.notifier).state = 0;
-                        controller.setPage(0);
-                      }
-                    },
+                    onPressed: _goToNextPage,
                     icon: const Icon(
                       Icons.arrow_right,
                       size: 25,
@@ -181,34 +187,38 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
       body: isMobile
           ? ref.watch(getBookPosition(widget.fileName)).when(
               data: (data) {
-                return PDFView(
-                  swipeHorizontal: true,
-                  fitEachPage: true,
-                  fitPolicy: FitPolicy.BOTH,
-                  filePath: widget.filePath,
-                  onViewCreated: (controller) {
-                    this.controller = controller;
-                  },
-                  defaultPage: int.parse(data ?? '0'),
-                  onPageChanged: (page, total) {
-                    ref.read(pdfCurrentPage.notifier).state = page ?? 0;
-                    ref.read(totalPdfPage.notifier).state = total ?? 0;
-                  },
+                return _buildTapNavigationWrapper(
+                  PDFView(
+                    swipeHorizontal: true,
+                    fitEachPage: true,
+                    fitPolicy: FitPolicy.BOTH,
+                    filePath: widget.filePath,
+                    onViewCreated: (controller) {
+                      this.controller = controller;
+                    },
+                    defaultPage: int.parse(data ?? '0'),
+                    onPageChanged: (page, total) {
+                      ref.read(pdfCurrentPage.notifier).state = page ?? 0;
+                      ref.read(totalPdfPage.notifier).state = total ?? 0;
+                    },
+                  ),
                 );
               },
               error: (error, stackTrace) {
-                return PDFView(
-                  swipeHorizontal: true,
-                  fitEachPage: true,
-                  fitPolicy: FitPolicy.BOTH,
-                  filePath: widget.filePath,
-                  onViewCreated: (controller) {
-                    this.controller = controller;
-                  },
-                  onPageChanged: (page, total) {
-                    ref.read(pdfCurrentPage.notifier).state = page ?? 0;
-                    ref.read(totalPdfPage.notifier).state = total ?? 0;
-                  },
+                return _buildTapNavigationWrapper(
+                  PDFView(
+                    swipeHorizontal: true,
+                    fitEachPage: true,
+                    fitPolicy: FitPolicy.BOTH,
+                    filePath: widget.filePath,
+                    onViewCreated: (controller) {
+                      this.controller = controller;
+                    },
+                    onPageChanged: (page, total) {
+                      ref.read(pdfCurrentPage.notifier).state = page ?? 0;
+                      ref.read(totalPdfPage.notifier).state = total ?? 0;
+                    },
+                  ),
                 );
               },
               loading: () {
@@ -244,6 +254,51 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildTapNavigationWrapper(Widget child) {
+    return Stack(
+      children: [
+        child,
+        Row(
+          children: [
+            // Left tap zone - previous page
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                onTapUp: (details) {
+                  _goToPreviousPage();
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+            // Center zone - no action (for other interactions)
+            Expanded(
+              flex: 1,
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+            // Right tap zone - next page
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                onTapUp: (details) {
+                  _goToNextPage();
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
