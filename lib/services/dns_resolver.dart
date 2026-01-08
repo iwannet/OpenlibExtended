@@ -220,33 +220,33 @@ class DnsResolverService {
         'domain': domain,
       });
       return [];
-    } on DioException catch (e, stackTrace) {
-      // Log the specific error type
-      if (e.response?.statusCode == 400) {
-        _logger.warning('DoH provider returned 400 Bad Request - provider may not support the request format', 
-          tag: 'DnsResolver', metadata: {
-          'domain': domain,
-          'provider': _currentProvider.name,
-          'statusCode': e.response?.statusCode,
-        });
+    } catch (e, stackTrace) {
+      // Handle both DioException and other exceptions
+      if (e is DioException) {
+        // Log the specific error type for DioException
+        if (e.response?.statusCode == 400) {
+          _logger.warning('DoH provider returned 400 Bad Request - provider may not support the request format', 
+            tag: 'DnsResolver', metadata: {
+            'domain': domain,
+            'provider': _currentProvider.name,
+            'statusCode': e.response?.statusCode,
+          });
+        } else {
+          _logger.error('DNS resolution failed', tag: 'DnsResolver', error: e, stackTrace: stackTrace, metadata: {
+            'domain': domain,
+            'provider': _currentProvider.name,
+            'errorType': e.type.toString(),
+          });
+        }
       } else {
-        _logger.error('DNS resolution failed', tag: 'DnsResolver', error: e, stackTrace: stackTrace, metadata: {
+        // Log unexpected errors
+        _logger.error('Unexpected DNS resolution error', tag: 'DnsResolver', error: e, stackTrace: stackTrace, metadata: {
           'domain': domain,
           'provider': _currentProvider.name,
-          'errorType': e.type.toString(),
         });
       }
       
-      // Try cycling to next provider on failure
-      cycleToNextProvider();
-      return [];
-    } catch (e, stackTrace) {
-      _logger.error('Unexpected DNS resolution error', tag: 'DnsResolver', error: e, stackTrace: stackTrace, metadata: {
-        'domain': domain,
-        'provider': _currentProvider.name,
-      });
-      
-      // Try cycling to next provider on failure (should rarely happen as DioException should catch most cases)
+      // Try cycling to next provider on any failure
       cycleToNextProvider();
       return [];
     }
