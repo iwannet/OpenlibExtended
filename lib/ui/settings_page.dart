@@ -48,10 +48,9 @@ Future<void> requestStoragePermission() async {
         .isPermanentlyDenied) {
       await openAppSettings();
     } else if (await Permission.manageExternalStorage.request().isDenied) {
-      permissionGranted = false;
+      // Permission denied
     }
   }
-  // Storage permission status: $permissionGranted
 }
 
 class SettingsPage extends ConsumerWidget {

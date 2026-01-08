@@ -53,7 +53,7 @@ class ResultPage extends ConsumerWidget {
                 slivers: <Widget>[
                   SliverToBoxAdapter(
                     child: const Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(bottom: 10),
                       // FIX 1: Changed PageTitleWidget back to TitleText
                       child: TitleText("Results"), 
                     ),
