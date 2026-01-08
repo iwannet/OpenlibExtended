@@ -40,7 +40,7 @@ void main() {
         // This will fail at compile time if the method doesn't exist
         // Call the method with named parameter as used in the actual code
         controller.jumpTo(index: 0);
-        expect(true, isTrue);
+        // The test passes if no exception is thrown
       } finally {
         // Ensure proper cleanup even if test fails
         controller?.dispose();
