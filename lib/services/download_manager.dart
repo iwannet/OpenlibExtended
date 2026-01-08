@@ -733,22 +733,6 @@ class DownloadManager {
     }
   }
 
-  Future<void> retryManualDownload(String taskId) async {
-    final task = _activeDownloads[taskId];
-    if (task == null || task.mirrorUrl == null) {
-      _logger.warning('Cannot retry: task not found or no mirror URL', tag: 'DownloadManager');
-      return;
-    }
-
-    _logger.info('Retrying manual download for: ${task.title}', tag: 'DownloadManager');
-    
-    // Reset task status to queued
-    _updateTaskStatus(taskId, DownloadStatus.queued, errorMessage: null);
-    
-    // Restart download process
-    await _startDownloadWithMirrorUrl(task, task.mirrorUrl!);
-  }
-
   void removeDownload(String taskId) {
     _activeDownloads.remove(taskId);
     _notifyListeners();

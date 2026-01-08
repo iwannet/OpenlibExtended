@@ -256,8 +256,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                           context: context,
                           message: 'Download started in background',
                         );
-                        // ignore: unused_result
-                        ref.refresh(myLibraryProvider);
+                        final _ = ref.refresh(myLibraryProvider);
                       }
                     } else {
                       showSnackBar(
@@ -313,8 +312,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                             context: context,
                             message: 'Download started in background',
                           );
-                          // ignore: unused_result
-                          ref.refresh(myLibraryProvider);
+                          final _ = ref.refresh(myLibraryProvider);
                         }
                       } else {
                         showSnackBar(
