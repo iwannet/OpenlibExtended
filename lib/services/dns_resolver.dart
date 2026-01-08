@@ -202,7 +202,7 @@ class DnsResolverService {
             _logger.warning('DoH failed, falling back to system DNS', tag: 'DnsResolver', metadata: {
               'host': uri.host,
             });
-            return Socket.connect(uri.host, uri.port);
+            return Socket.startConnect(uri.host, uri.port);
           }
           
           // Try each resolved IP address
@@ -214,14 +214,11 @@ class DnsResolverService {
                 'port': uri.port,
               });
               
-              return await Socket.connect(
+              return Socket.startConnect(
                 address,
                 uri.port,
                 timeout: const Duration(seconds: 10),
-              ).then((socket) {
-                // Set the original host for SNI (Server Name Indication)
-                return socket;
-              });
+              );
             } catch (e) {
               _logger.warning('Failed to connect to IP', tag: 'DnsResolver', metadata: {
                 'ip': address,

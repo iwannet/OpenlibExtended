@@ -269,7 +269,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                 if (showManualButton)
                   TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.2),
+                      backgroundColor: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.2),
                       padding:
                           const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       textStyle: const TextStyle(
