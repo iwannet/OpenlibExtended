@@ -1,45 +1,15 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 // Package imports:
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yaml/yaml.dart';
 
 // Project imports:
 import 'package:openlib/ui/components/page_title_widget.dart';
 import 'package:openlib/ui/components/snack_bar_widget.dart';
 
-class AboutPage extends StatefulWidget {
+class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
-
-  @override
-  State<AboutPage> createState() => _AboutPageState();
-}
-
-class _AboutPageState extends State<AboutPage> {
-  String _version = 'Loading...';
-
-  @override
-  void initState() {
-    super.initState();
-    _loadVersion();
-  }
-
-  Future<void> _loadVersion() async {
-    try {
-      final yamlString = await rootBundle.loadString('pubspec.yaml');
-      final yamlMap = loadYaml(yamlString);
-      final version = yamlMap['version'] as String;
-      setState(() {
-        _version = version;
-      });
-    } catch (e) {
-      setState(() {
-        _version = 'Unknown';
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,23 +49,6 @@ class _AboutPageState extends State<AboutPage> {
                 child: Text(
                   "Original app by DHR-Store.",
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.grey),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 7, right: 7, top: 15),
-                child: Text(
-                  "Version",
-                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 7, right: 7, top: 5),
-                child: Text(
-                  _version,
-                  style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
                 ),
               ),
               const Padding(
