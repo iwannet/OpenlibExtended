@@ -57,7 +57,7 @@ class MirrorFetcherService {
             }
           }
         },
-        onLoadError: (controller, url, code, message) {
+        onReceivedError: (controller, request, error) {
           // Load error, complete with empty list
           if (!completer.isCompleted) {
             completer.complete([]);
