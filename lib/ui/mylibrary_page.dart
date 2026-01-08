@@ -35,7 +35,7 @@ class MyLibraryPage extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.only(left: 5, right: 5, top: 10),
               child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 slivers: <Widget>[
                   const SliverToBoxAdapter(
                     child: ActiveDownloadsWidget(),
@@ -72,8 +72,10 @@ class MyLibraryPage extends ConsumerWidget {
             onRefresh: () => _refreshLibrary(ref),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 200,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height * 0.7,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,

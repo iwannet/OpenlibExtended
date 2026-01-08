@@ -69,12 +69,13 @@ class DownloadTask {
     int? totalBytes,
     String? errorMessage,
     CancelToken? cancelToken,
+    List<String>? mirrors,
   }) {
     return DownloadTask(
       id: id,
       md5: md5,
       title: title,
-      mirrors: mirrors,
+      mirrors: mirrors ?? this.mirrors,
       format: format,
       author: author,
       thumbnail: thumbnail,
@@ -441,27 +442,7 @@ class DownloadManager {
       }
 
       // Update task with fetched mirrors
-      _activeDownloads[task.id] = task.copyWith();
-      // Create a new task with the mirrors
-      final updatedTask = DownloadTask(
-        id: task.id,
-        md5: task.md5,
-        title: task.title,
-        author: task.author,
-        thumbnail: task.thumbnail,
-        publisher: task.publisher,
-        info: task.info,
-        format: task.format,
-        description: task.description,
-        link: task.link,
-        mirrors: fetchedMirrors,
-        status: task.status,
-        progress: task.progress,
-        downloadedBytes: task.downloadedBytes,
-        totalBytes: task.totalBytes,
-        errorMessage: task.errorMessage,
-        cancelToken: task.cancelToken,
-      );
+      final updatedTask = task.copyWith(mirrors: fetchedMirrors);
       _activeDownloads[task.id] = updatedTask;
 
       // Now proceed with the regular download flow
