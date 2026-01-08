@@ -9,6 +9,7 @@ import 'package:crypto/crypto.dart';
 // Project imports:
 import 'package:openlib/services/database.dart' show MyLibraryDb, MyBook;
 import 'package:openlib/services/download_notification.dart';
+import 'package:openlib/services/logger.dart';
 import 'package:openlib/services/mirror_fetcher.dart';
 
 enum DownloadStatus {
@@ -101,6 +102,7 @@ class DownloadManager {
   final MyLibraryDb _database = MyLibraryDb.instance;
   final DownloadNotificationService _notificationService =
       DownloadNotificationService();
+  final AppLogger _logger = AppLogger();
 
   final Map<String, DownloadTask> _activeDownloads = {};
   final StreamController<Map<String, DownloadTask>> _downloadsController =
@@ -113,6 +115,7 @@ class DownloadManager {
 
   Future<void> initialize() async {
     await _notificationService.initialize();
+    _logger.info('DownloadManager initialized', tag: 'DownloadManager');
   }
 
   Future<String> _getFilePath(String fileName) async {
@@ -180,9 +183,11 @@ class DownloadManager {
 
   Future<void> addDownload(DownloadTask task) async {
     if (_activeDownloads.containsKey(task.id)) {
+      _logger.warning('Download already exists: ${task.title}', tag: 'DownloadManager');
       return;
     }
 
+    _logger.info('Adding download: ${task.title} (${task.format})', tag: 'DownloadManager');
     _activeDownloads[task.id] = task;
     _notifyListeners();
 
@@ -197,9 +202,11 @@ class DownloadManager {
 
   Future<void> addDownloadWithMirrorUrl(DownloadTask task, String mirrorUrl) async {
     if (_activeDownloads.containsKey(task.id)) {
+      _logger.warning('Download already exists: ${task.title}', tag: 'DownloadManager');
       return;
     }
 
+    _logger.info('Adding download with mirror URL: ${task.title} (${task.format})', tag: 'DownloadManager');
     _activeDownloads[task.id] = task;
     _notifyListeners();
 
@@ -412,6 +419,8 @@ class DownloadManager {
   Future<void> _startDownloadWithMirrorUrl(DownloadTask task, String mirrorUrl) async {
     Dio? dio;
     try {
+      _logger.info('Starting download with mirror URL for: ${task.title}', tag: 'DownloadManager');
+      
       // Update status to fetching mirrors
       _updateTaskStatus(task.id, DownloadStatus.fetchingMirrors);
       await _notificationService.showDownloadNotification(
@@ -426,20 +435,25 @@ class DownloadManager {
       List<String> fetchedMirrors = await mirrorFetcher.fetchMirrors(mirrorUrl);
 
       if (!_activeDownloads.containsKey(task.id)) {
+        _logger.warning('Task cancelled while fetching mirrors: ${task.title}', tag: 'DownloadManager');
         return; // Task was cancelled while fetching mirrors
       }
 
       if (fetchedMirrors.isEmpty) {
+        _logger.error('Background mirror fetching failed for: ${task.title}', tag: 'DownloadManager');
+        // Background fetching failed - store the mirror URL for fallback
         _updateTaskStatus(task.id, DownloadStatus.failed,
-            errorMessage: 'Failed to fetch mirrors!');
+            errorMessage: 'Manual verification required - please use "Download" button to open captcha page');
         await _notificationService.showDownloadNotification(
           id: task.id.hashCode,
           title: task.title,
-          body: 'Failed: Could not get mirrors',
+          body: 'Manual verification needed',
           progress: -1,
         );
         return;
       }
+
+      _logger.info('Successfully fetched ${fetchedMirrors.length} mirrors for: ${task.title}', tag: 'DownloadManager');
 
       // Update task with fetched mirrors
       final updatedTask = task.copyWith(mirrors: fetchedMirrors);

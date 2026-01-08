@@ -20,6 +20,7 @@ import 'package:openlib/ui/components/book_info_widget.dart';
 import 'package:openlib/ui/components/error_widget.dart';
 import 'package:openlib/ui/components/file_buttons_widget.dart';
 import 'package:openlib/ui/components/snack_bar_widget.dart';
+import 'package:openlib/ui/webview_page.dart';
 
 import 'package:openlib/state/state.dart'
     show
@@ -207,11 +208,11 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
         } else {
           return Padding(
             padding: const EdgeInsets.only(top: 21, bottom: 21),
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.start, // Aligns buttons properly
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                // Button for "Add To My Library"
+                // Button for "Add To My Library" (background download)
                 TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -260,6 +261,50 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                     }
                   },
                   child: const Text('Add To My Library'),
+                ),
+                // Button for "Manual Download" (opens webview for captcha)
+                TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    textStyle: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (widget.data.mirror != null &&
+                        widget.data.mirror != '') {
+                      // Navigate to webview page
+                      final List<String>? mirrors = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Webview(url: widget.data.mirror!),
+                        ),
+                      );
+                      
+                      if (mirrors != null && mirrors.isNotEmpty && context.mounted) {
+                        // Start download with fetched mirrors
+                        await downloadFileWidget(
+                          ref,
+                          context,
+                          widget.data,
+                          mirrors,
+                        );
+                      }
+                    } else {
+                      showSnackBar(
+                          context: context, message: 'No mirrors available!');
+                    }
+                  },
+                  child: Text(
+                    'Manual Download',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.tertiary,
+                    ),
+                  ),
                 )
               ],
             ),
