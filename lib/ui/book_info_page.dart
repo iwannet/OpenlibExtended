@@ -1,5 +1,6 @@
 // Dart imports:
 // import 'dart:convert';
+import 'dart:async';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
@@ -256,7 +257,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                           context: context,
                           message: 'Download started in background',
                         );
-                        final _ = ref.refresh(myLibraryProvider);
+                        unawaited(ref.refresh(myLibraryProvider));
                       }
                     } else {
                       showSnackBar(
@@ -312,7 +313,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                             context: context,
                             message: 'Download started in background',
                           );
-                          final _ = ref.refresh(myLibraryProvider);
+                          unawaited(ref.refresh(myLibraryProvider));
                         }
                       } else {
                         showSnackBar(
