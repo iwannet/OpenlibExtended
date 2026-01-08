@@ -113,9 +113,10 @@ class DownloadManager {
       StreamController<Map<String, DownloadTask>>.broadcast();
 
   // Constants for download completion timing
-  // Total time before task removal = notificationClearDelay + taskRemovalDelay = 30 seconds
+  // Tasks are removed 30 seconds after completion: 3s for notification clear, then 27s additional delay
   static const Duration _notificationClearDelay = Duration(seconds: 3);
-  static const Duration _taskRemovalDelay = Duration(seconds: 27);
+  static const Duration _totalCompletionTime = Duration(seconds: 30);
+  static final Duration _taskRemovalDelay = _totalCompletionTime - _notificationClearDelay;
 
   Stream<Map<String, DownloadTask>> get downloadsStream =>
       _downloadsController.stream;
