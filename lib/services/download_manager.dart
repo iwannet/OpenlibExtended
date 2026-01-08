@@ -205,7 +205,8 @@ class DownloadManager {
       progress: 0,
     );
 
-    await _startDownload(task);
+    // Start download in background (fire-and-forget)
+    _startDownload(task);
   }
 
   Future<void> addDownloadWithMirrorUrl(DownloadTask task, String mirrorUrl) async {
@@ -227,7 +228,8 @@ class DownloadManager {
       progress: 0,
     );
 
-    await _startDownloadWithMirrorUrl(taskWithMirrorUrl, mirrorUrl);
+    // Start download in background (fire-and-forget)
+    _startDownloadWithMirrorUrl(taskWithMirrorUrl, mirrorUrl);
   }
 
   Future<void> _startDownload(DownloadTask task) async {
