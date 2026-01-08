@@ -112,7 +112,7 @@ class EpubViewer extends ConsumerStatefulWidget {
 class _EpubViewerState extends ConsumerState<EpubViewer> {
   late EpubController _epubReaderController;
   String? epubConf;
-  int _pointerCount = 0;
+  final Set<int> _activePointers = {};
 
   @override
   void initState() {
@@ -221,12 +221,12 @@ class _EpubViewerState extends ConsumerState<EpubViewer> {
         Positioned.fill(
           child: Listener(
             behavior: HitTestBehavior.translucent,
-            onPointerDown: (event) => _pointerCount++,
+            onPointerDown: (event) => _activePointers.add(event.pointer),
             onPointerUp: (event) {
-              _pointerCount--;
+              _activePointers.remove(event.pointer);
               
               // Only handle navigation on single-finger taps
-              if (_pointerCount == 0) {
+              if (_activePointers.isEmpty) {
                 final screenWidth = MediaQuery.of(context).size.width;
                 final tapPosition = event.position.dx;
                 
@@ -241,7 +241,7 @@ class _EpubViewerState extends ConsumerState<EpubViewer> {
                 // Center zone (30-70%) - no action, allows text selection
               }
             },
-            onPointerCancel: (event) => _pointerCount--,
+            onPointerCancel: (event) => _activePointers.remove(event.pointer),
             child: Container(color: Colors.transparent),
           ),
         ),
