@@ -1,3 +1,6 @@
+// Dart imports:
+import 'dart:async';
+
 // Package imports:
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -10,6 +13,7 @@ class MirrorFetcherService {
   /// Fetch mirror links from the given URL in the background
   /// Returns a list of mirror download links
   Future<List<String>> fetchMirrors(String url) async {
+    final Completer<List<String>> completer = Completer<List<String>>();
     final List<String> bookDownloadLinks = [];
 
     try {
@@ -17,7 +21,12 @@ class MirrorFetcherService {
       final headlessWebView = HeadlessInAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(url)),
         onLoadStop: (controller, url) async {
-          if (url == null) return;
+          if (url == null) {
+            if (!completer.isCompleted) {
+              completer.complete([]);
+            }
+            return;
+          }
           
           try {
             if (url.toString().contains("slow_download")) {
@@ -36,8 +45,22 @@ class MirrorFetcherService {
                   await controller.evaluateJavascript(source: query);
               bookDownloadLinks.addAll(mirrorLinks.cast<String>());
             }
+            
+            // Complete the future with the extracted links
+            if (!completer.isCompleted) {
+              completer.complete(bookDownloadLinks);
+            }
           } catch (e) {
-            // Evaluation error, will return empty list
+            // Evaluation error, complete with empty list
+            if (!completer.isCompleted) {
+              completer.complete([]);
+            }
+          }
+        },
+        onLoadError: (controller, url, code, message) {
+          // Load error, complete with empty list
+          if (!completer.isCompleted) {
+            completer.complete([]);
           }
         },
       );
@@ -47,17 +70,15 @@ class MirrorFetcherService {
 
       // Wait for the page to load and links to be extracted
       // Maximum wait time of 15 seconds
-      int attempts = 0;
-      const maxAttempts = 30; // 30 * 500ms = 15 seconds
-      while (bookDownloadLinks.isEmpty && attempts < maxAttempts) {
-        await Future.delayed(const Duration(milliseconds: 500));
-        attempts++;
-      }
+      final result = await completer.future.timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => [],
+      );
 
       // Dispose the headless webview
       await headlessWebView.dispose();
 
-      return bookDownloadLinks;
+      return result;
     } catch (e) {
       // Return empty list on error
       return [];
