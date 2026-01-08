@@ -55,12 +55,6 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      - name: Verify dependencies
-        run: |
-          echo "Verifying Flutter dependencies..."
-          flutter pub get --dry-run
-          echo "Dependencies verified successfully!"
-
       - name: Run Flutter analyze
         run: |
           echo "Running Flutter analyze to catch compilation errors early..."

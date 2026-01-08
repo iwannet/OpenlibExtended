@@ -1,30 +1,57 @@
 // Flutter imports:
 import 'package:flutter_test/flutter_test.dart';
 
+// Package imports:
+import 'package:epub_view/epub_view.dart';
+
+// Project imports:
+import 'package:openlib/ui/epub_viewer.dart';
+
 // This test ensures that the epub_viewer.dart file compiles correctly
 // and that the EpubController methods are used correctly.
 void main() {
   group('EpubViewer Compilation Tests', () {
-    test('epub_viewer.dart should compile without errors', () {
+    test('epub_viewer.dart imports successfully', () {
       // This test will fail at compile time if there are syntax errors
       // or undefined method calls in epub_viewer.dart
-      expect(true, isTrue);
+      // The import of epub_viewer.dart above ensures the file compiles
+      expect(EpubViewerWidget, isNotNull);
+      expect(EpubViewer, isNotNull);
     });
 
-    test('EpubController should have jumpTo method', () {
-      // This test validates that we're using the correct API
-      // The actual method signature is: jumpTo({required int index, double alignment = 0})
-      // This test will fail if the method doesn't exist
-      expect(true, isTrue);
+    test('EpubController has jumpTo method', () {
+      // This test validates that the EpubController has the jumpTo method
+      // that we're using in the epub_viewer.dart file
+      // If the method doesn't exist, this test will fail at compile time
+      
+      // Create a mock controller to verify the API exists
+      final controller = EpubController(
+        document: Future.value(EpubBook()),
+      );
+      
+      // Verify that jumpTo method exists and can be called
+      // This will fail at compile time if the method doesn't exist
+      expect(controller.jumpTo, isNotNull);
+      
+      controller.dispose();
     });
   });
 
-  group('EpubViewer Navigation Logic', () {
-    test('navigation methods should handle null values correctly', () {
-      // Test validates the null-safety logic in navigation methods
-      // _navigateToPreviousChapter checks if currentValue is not null and chapterNumber > 0
-      // _navigateToNextChapter checks if currentValue is not null
-      expect(true, isTrue);
+  group('EpubViewer Widgets', () {
+    test('EpubViewerWidget can be instantiated', () {
+      // Verify the widget can be created
+      const widget = EpubViewerWidget(fileName: 'test.epub');
+      expect(widget.fileName, equals('test.epub'));
+    });
+
+    test('EpubViewer can be instantiated', () {
+      // Verify the viewer widget can be created
+      const widget = EpubViewer(
+        filePath: '/path/to/test.epub',
+        fileName: 'test.epub',
+      );
+      expect(widget.filePath, equals('/path/to/test.epub'));
+      expect(widget.fileName, equals('test.epub'));
     });
   });
 }
