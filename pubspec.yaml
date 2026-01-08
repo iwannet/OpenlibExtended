@@ -67,6 +67,7 @@ dependencies:
   path: ^1.9.0
   share_plus: ^10.1.0
   flutter_local_notifications: ^18.0.1
+  yaml: ^3.1.2
 
 dev_dependencies:
   import_sorter: ^4.6.0
@@ -104,6 +105,7 @@ flutter:
   assets:
     - assets/
     - google_fonts/
+    - pubspec.yaml
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

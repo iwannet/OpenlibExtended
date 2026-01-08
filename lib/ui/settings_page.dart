@@ -10,6 +10,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openlib/services/files.dart';
+import 'package:openlib/services/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 // Project imports:
@@ -207,6 +208,34 @@ class SettingsPage extends ConsumerWidget {
                   ),
                   const Icon(Icons.folder),
                 ]),
+            _PaddedContainer(
+              onClick: () async {
+                try {
+                  final logger = AppLogger();
+                  await logger.exportLogs();
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to export logs: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              children: [
+                Text(
+                  "Export Logs (Last 5 Minutes)",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                ),
+                const Icon(Icons.file_download),
+              ],
+            ),
             _PaddedContainer(
               onClick: () {
                 Navigator.push(context,

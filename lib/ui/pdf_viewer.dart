@@ -276,8 +276,9 @@ class _PdfViewerState extends ConsumerState<PdfViewer> {
                 // Right zone - next page
                 _goToNextPage();
               }
-              // Center zone (30-70%) - no action, allows other interactions
+              // Center zone (30-70%) - no action, allows zooming and other interactions
             },
+            // This child is transparent to allow underlying PDF gestures (like zoom) to work
             child: Container(color: Colors.transparent),
           ),
         ),
