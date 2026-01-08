@@ -1,6 +1,5 @@
 // Dart imports:
 // import 'dart:convert';
-import 'dart:async' show unawaited;
 
 // Flutter imports:
 import 'package:flutter/material.dart';
@@ -257,7 +256,7 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                           context: context,
                           message: 'Download started in background',
                         );
-                        unawaited(ref.refresh(myLibraryProvider));
+                        ref.invalidate(myLibraryProvider);
                       }
                     } else {
                       showSnackBar(
@@ -309,11 +308,13 @@ class _ActionButtonWidgetState extends ConsumerState<ActionButtonWidget> {
                           
                           await downloadManager.addDownload(task);
                           
-                          showSnackBar(
-                            context: context,
-                            message: 'Download started in background',
-                          );
-                          unawaited(ref.refresh(myLibraryProvider));
+                          if (context.mounted) {
+                            showSnackBar(
+                              context: context,
+                              message: 'Download started in background',
+                            );
+                          }
+                          ref.invalidate(myLibraryProvider);
                         }
                       } else {
                         showSnackBar(
@@ -401,8 +402,7 @@ Future<void> downloadFileWidget(WidgetRef ref, BuildContext context,
           }
           // ignore: unused_result
           ref.refresh(checkIdExists(data.md5));
-          // ignore: unused_result
-          ref.refresh(myLibraryProvider);
+          ref.invalidate(myLibraryProvider);
           // ignore: use_build_context_synchronously
           showSnackBar(context: context, message: 'Book has been downloaded!');
         }
