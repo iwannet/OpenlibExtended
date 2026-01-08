@@ -402,8 +402,7 @@ Future<void> downloadFileWidget(WidgetRef ref, BuildContext context,
           }
           // ignore: unused_result
           ref.refresh(checkIdExists(data.md5));
-          // ignore: unused_result
-          ref.refresh(myLibraryProvider);
+          ref.invalidate(myLibraryProvider);
           // ignore: use_build_context_synchronously
           showSnackBar(context: context, message: 'Book has been downloaded!');
         }
