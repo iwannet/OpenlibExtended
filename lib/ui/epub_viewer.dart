@@ -107,10 +107,10 @@ class EpubViewer extends ConsumerStatefulWidget {
   final String fileName;
 
   @override
-  EpubViewerState createState() => EpubViewerState();
+  State<EpubViewer> createState() => _EpubViewerState();
 }
 
-class EpubViewerState extends ConsumerState<EpubViewer> {
+class _EpubViewerState extends ConsumerState<EpubViewer> {
   late EpubController _epubReaderController;
   String? epubConf;
 
