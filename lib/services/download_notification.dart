@@ -31,6 +31,13 @@ class DownloadNotificationService {
     return result.isGranted;
   }
 
+  Future<bool> checkNotificationPermission() async {
+    if (!Platform.isAndroid) return true;
+
+    final status = await Permission.notification.status;
+    return status.isGranted;
+  }
+
   Future<void> initialize() async {
     if (_initialized) return;
 

@@ -106,7 +106,7 @@ class _WebviewState extends ConsumerState<Webview> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Theme.of(context).colorScheme.tertiary.withAlpha(170),
+                            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.67),
                           ),
                         ),
                       ),

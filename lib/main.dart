@@ -141,15 +141,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .catchError((_) => 0);
     
     if (hasAskedBefore == 0) {
+      // Check current permission status
       final notificationService = DownloadNotificationService();
-      final hasPermission = await notificationService.requestNotificationPermission();
+      final currentStatus = await notificationService.checkNotificationPermission();
       
-      if (!hasPermission && mounted) {
+      if (!currentStatus && mounted) {
+        // Show the contextual dialog first
         _showNotificationPermissionDialog();
+      } else {
+        // Already granted, just mark as asked
+        await prefs.savePreference('hasAskedNotificationPermission', 1);
       }
-      
-      // Mark that we've asked before
-      await prefs.setPreference('hasAskedNotificationPermission', 1);
     }
   }
 
@@ -169,23 +171,29 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             'Openlib needs notification permission to show download progress in the background. This helps you track your book downloads even when the app is minimized.',
             style: TextStyle(
               fontSize: 13,
-              color: Theme.of(context).colorScheme.tertiary.withAlpha(200),
+              color: Theme.of(context).colorScheme.tertiary.withOpacity(0.78),
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Don't mark as asked so we can ask again later
+              },
               child: Text(
                 'Maybe Later',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.tertiary.withAlpha(170),
+                  color: Theme.of(context).colorScheme.tertiary.withOpacity(0.67),
                 ),
               ),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
+                // Request permission when user clicks Enable
                 await DownloadNotificationService().requestNotificationPermission();
+                // Mark that we've asked
+                await MyLibraryDb.instance.savePreference('hasAskedNotificationPermission', 1);
               },
               child: Text(
                 'Enable',
