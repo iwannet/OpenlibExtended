@@ -20,7 +20,6 @@ import 'package:openlib/ui/components/book_info_widget.dart';
 import 'package:openlib/ui/components/error_widget.dart';
 import 'package:openlib/ui/components/file_buttons_widget.dart';
 import 'package:openlib/ui/components/snack_bar_widget.dart';
-import 'package:openlib/ui/webview_page.dart';
 
 import 'package:openlib/state/state.dart'
     show
